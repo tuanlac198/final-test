@@ -1,0 +1,171 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Nguoi {
+protected:
+    string hoten;
+    string gioitinh;
+    int tuoi;
+
+public:
+   
+    Nguoi(string hoten = "", string gioitinh = "", int tuoi = 0) 
+        : hoten(hoten), gioitinh(gioitinh), tuoi(tuoi) {}
+
+   
+    virtual ~Nguoi() {
+        cout << "Huy doi tuong Nguoi: " << hoten << endl;
+    }
+
+    
+    virtual void Nhap() {
+        cout << "Nhap ho ten: ";
+        getline(cin, hoten);
+        cout << "Nhap gioi tinh: ";
+        getline(cin, gioitinh);
+        cout << "Nhap tuoi: ";
+        cin >> tuoi;
+        cin.ignore(); 
+    }
+
+   
+    virtual void Xuat() const {
+        cout << "Ho ten: " << hoten << endl;
+        cout << "Gioi tinh: " << gioitinh << endl;
+        cout << "Tuoi: " << tuoi << endl;
+    }
+};
+
+class Vemaybay {
+private:
+    string tenchuyen;
+    string ngaybay;
+    double giave;
+
+public:
+    
+    Vemaybay(string tenchuyen = "", string ngaybay = "", double giave = 0.0) 
+        : tenchuyen(tenchuyen), ngaybay(ngaybay), giave(giave) {}
+
+   
+    ~Vemaybay() {
+        cout << "Huy doi tuong Vemaybay cua chuyen bay " << tenchuyen << endl;
+    }
+
+    // Hàm nhập
+    void Nhap() {
+        cout << "Nhap ten chuyen: ";
+        getline(cin, tenchuyen);
+        cout << "Nhap ngay bay: ";
+        getline(cin, ngaybay);
+        cout << "Nhap gia ve: ";
+        cin >> giave;
+        cin.ignore(); 
+    }
+
+    // Hàm xuất
+    void Xuat() const {
+        cout << "Ten chuyen: " << tenchuyen << endl;
+        cout << "Ngay bay: " << ngaybay << endl;
+        cout << "Gia ve: " << giave << endl;
+    }
+
+    // Hàm getgiave
+    double getgiave() const {
+        return giave;
+    }
+};
+
+class Hanhkhach : public Nguoi {
+private:
+    Vemaybay *ve;
+    int soluong;
+
+public:
+
+    Hanhkhach(string hoten = "", string gioitinh = "", int tuoi = 0, int soluong = 0) 
+        : Nguoi(hoten, gioitinh, tuoi), soluong(soluong) {
+        if (soluong > 0) {
+            ve = new Vemaybay[soluong];
+        } else {
+            ve = nullptr;
+        }
+    }
+
+    
+    ~Hanhkhach() {
+        delete[] ve;
+        cout << "Huy doi tuong Hanhkhach: " << hoten << endl;
+    }
+
+
+    void Nhap() override {
+        Nguoi::Nhap();
+        cout << "Nhap so luong ve: ";
+        cin >> soluong;
+        cin.ignore(); 
+
+        if (soluong > 0) {
+            ve = new Vemaybay[soluong];
+            for (int i = 0; i < soluong; ++i) {
+                cout << "Nhap thong tin ve thu " << i + 1 << ":" << endl;
+                ve[i].Nhap();
+            }
+        }
+    }
+
+
+    void Xuat() const override {
+        Nguoi::Xuat();
+        cout << "So luong ve: " << soluong << endl;
+        for (int i = 0; i < soluong; ++i) {
+            cout << "Thong tin ve thu " << i + 1 << ":" << endl;
+            ve[i].Xuat();
+        }
+    }
+
+    double tongtien() const {
+        double tong = 0;
+        for (int i = 0; i < soluong; ++i) {
+            tong += ve[i].getgiave();
+        }
+        return tong;
+    }
+};
+
+int main() {
+    int n;
+    cout << "Nhap so luong hanh khach: ";
+    cin >> n;
+   
+
+    vector<Hanhkhach> danhSachHanhKhach(n);
+
+    for (int i = 0; i < n; ++i) {
+        cout << "Nhap thong tin hanh khach thu " << i + 1 << ":" << endl;
+        danhSachHanhKhach[i].Nhap();
+    }
+
+    cout << "\nDanh sach hanh khach va tong tien tuong ung:\n";
+    for (int i = 0; i < n; ++i) {
+        danhSachHanhKhach[i].Xuat();
+        cout << "Tong tien: " << danhSachHanhKhach[i].tongtien() << endl << endl;
+    }
+
+    
+    sort(danhSachHanhKhach.begin(), danhSachHanhKhach.end(), [](const Hanhkhach& a, const Hanhkhach& b) {
+        return a.tongtien() > b.tongtien();
+    });
+
+    cout << "\nDanh sach hanh khach sau khi sap xep theo tong tien giam dan:\n";
+    for (int i = 0; i < n; ++i) {
+        danhSachHanhKhach[i].Xuat();
+        cout << "Tong tien: " << danhSachHanhKhach[i].tongtien() << endl << endl;
+    }
+
+    return 0;
+}

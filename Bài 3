@@ -22,8 +22,7 @@ std::string encodeString(const std::string& s) {
             count = 1;
         }
     }
-    
-    // Thêm ký tự cuối cùng và số lượng của nó
+      
     encoded += current_char;
     encoded += std::to_string(count);
     
